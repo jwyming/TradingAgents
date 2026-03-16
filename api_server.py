@@ -52,6 +52,9 @@ def run_agent_analysis(task_id: str, symbol: str, date_str: str):
             "news_data": "yfinance",                 # Options: alpha_vantage, yfinance
         }
 
+        # Output language
+        config["output_language"] = "zh"
+
         # Initialize with custom config
         ta = TradingAgentsGraph(debug=True, config=config)
 

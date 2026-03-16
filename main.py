@@ -29,11 +29,14 @@ config["data_vendors"] = {
     "news_data": "yfinance",                 # Options: alpha_vantage, yfinance
 }
 
+# Output language
+config["output_language"] = "zh"
+
 # Initialize with custom config
 ta = TradingAgentsGraph(debug=True, config=config)
 
 # forward propagate
-_, decision = ta.propagate("TSLA", "2026-03-14")
+_, decision = ta.propagate("GOOGL", "2026-03-16")
 print(decision)
 
 # Memorize mistakes and reflect
