@@ -30,8 +30,12 @@ def run_agent_analysis(task_id: str, symbol: str, date_str: str):
         # Load environment variables from .env file
         load_dotenv()
 
-        os.environ['HTTP_PROXY'] = "http://127.0.0.1:10810"
-        os.environ['HTTPS_PROXY'] = "http://127.0.0.1:10810"
+        # 从 .env 读取 yfinance 代理配置
+        use_proxy = os.getenv("USE_YF_PROXY", "false").lower() in ("true", "1", "yes")
+        if use_proxy:
+            proxy_url = os.getenv("YF_PROXY_URL", "http://127.0.0.1:10810")
+            os.environ["HTTP_PROXY"] = proxy_url
+            os.environ["HTTPS_PROXY"] = proxy_url
 
         # Create a custom config
         config = DEFAULT_CONFIG.copy()
