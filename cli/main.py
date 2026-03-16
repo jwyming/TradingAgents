@@ -921,7 +921,7 @@ def run_analysis():
     # Provider-specific thinking configuration
     config["google_thinking_level"] = selections.get("google_thinking_level")
     config["openai_reasoning_effort"] = selections.get("openai_reasoning_effort")
-    config["output_language"] = selections.get("output_language", "en")
+    config["output_language"] = selections.get("output_language", "zh")
 
     # Create stats callback handler for tracking LLM/tool calls
     stats_handler = StatsCallbackHandler()
