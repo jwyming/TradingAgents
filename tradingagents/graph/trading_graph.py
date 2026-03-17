@@ -254,11 +254,14 @@ class TradingAgentsGraph:
         directory = Path(f"eval_results/{self.ticker}/TradingAgentsStrategy_logs/")
         directory.mkdir(parents=True, exist_ok=True)
 
+        # open file with utf-8 encoding
         with open(
             f"eval_results/{self.ticker}/TradingAgentsStrategy_logs/full_states_log_{trade_date}.json",
             "w",
+            encoding="utf-8",
         ) as f:
-            json.dump(self.log_states_dict, f, indent=4)
+            # ensure_ascii=False 使中文正常显示，不转义为 \uXXXX
+            json.dump(self.log_states_dict, f, indent=4, ensure_ascii=False)
 
     def reflect_and_remember(self, returns_losses):
         """Reflect on decisions and update memory based on returns."""
