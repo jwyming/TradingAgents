@@ -128,6 +128,17 @@ def get_stock_stats_indicators_window(
         ),
     }
 
+    # LLM 常把 MACD 信号线说成 macd_signal；stockstats 列名为 macds。做别名映射避免工具调用失败。
+    _ind_key = str(indicator).strip().lower().replace("-", "_")
+    _INDICATOR_ALIASES = {
+        "macd_signal": "macds",
+        "macd_signal_line": "macds",
+        "macd_histogram": "macdh",
+        "macd_hist": "macdh",
+        "macd_line": "macd",
+    }
+    indicator = _INDICATOR_ALIASES.get(_ind_key, _ind_key)
+
     if indicator not in best_ind_params:
         raise ValueError(
             f"Indicator {indicator} is not supported. Please choose from: {list(best_ind_params.keys())}"
