@@ -19,7 +19,7 @@ config = DEFAULT_CONFIG.copy()
 config["llm_provider"] = "openrouter"        # openai, google, anthropic, xai, openrouter, ollama
 config["deep_think_llm"] = "z-ai/glm-4.5-air:free"  # Use a different model
 config["quick_think_llm"] = "nvidia/nemotron-3-nano-30b-a3b:free"  # Use a different model
-config["max_debate_rounds"] = 1  # Increase debate rounds
+config["max_debate_rounds"] = 3  # Increase debate rounds
 
 # Configure data vendors (default uses yfinance, no extra API keys needed)
 config["data_vendors"] = {
