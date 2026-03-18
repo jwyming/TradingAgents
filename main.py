@@ -16,8 +16,12 @@ if use_proxy:
 
 # Create a custom config
 config = DEFAULT_CONFIG.copy()
-config["llm_provider"] = "openrouter"        # openai, google, anthropic, xai, openrouter, ollama
-config["deep_think_llm"] = "z-ai/glm-4.5-air:free"  # Use a different model
+# config["llm_provider"] = "openrouter"        # 默认 provider（兼容旧配置）
+# 可选：分别给 deep/quick 指定不同 provider；未设置则回退到 llm_provider
+config["deep_llm_provider"] = "openrouter"
+config["quick_llm_provider"] = "openrouter"
+# config["deep_think_llm"] = "z-ai/glm-4.5-air:free"  # Use a different model
+config["deep_think_llm"] = "nvidia/nemotron-3-super-120b-a12b:free"  # Use a different model
 config["quick_think_llm"] = "nvidia/nemotron-3-nano-30b-a3b:free"  # Use a different model
 config["max_debate_rounds"] = 3  # Increase debate rounds
 

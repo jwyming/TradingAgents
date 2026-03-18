@@ -9,9 +9,17 @@ DEFAULT_CONFIG = {
     ),
     # LLM settings
     "llm_provider": "openai",
+    # Optional: allow using different providers for deep/quick models.
+    # If None, falls back to `llm_provider` for backward compatibility.
+    "deep_llm_provider": None,
+    "quick_llm_provider": None,
     "deep_think_llm": "gpt-5.2",
     "quick_think_llm": "gpt-5-mini",
     "backend_url": "https://api.openai.com/v1",
+    # Optional: allow using different base URLs for deep/quick models (OpenAI-compatible providers).
+    # If None, falls back to `backend_url` for backward compatibility.
+    "deep_backend_url": None,
+    "quick_backend_url": None,
     # Provider-specific thinking configuration
     "google_thinking_level": None,      # "high", "minimal", etc.
     "openai_reasoning_effort": None,    # "medium", "high", "low"

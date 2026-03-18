@@ -536,49 +536,69 @@ def get_user_selections():
     )
     selected_research_depth = select_research_depth()
 
-    # Step 5: OpenAI backend
+    # Step 5: LLM provider (Shallow thinker / Quick model)
     console.print(
         create_question_box(
-            "Step 5: OpenAI backend", "Select which service to talk to"
+            "Step 5: LLM Provider (Shallow Thinker)",
+            "Select which service the shallow thinker should talk to",
         )
     )
-    selected_llm_provider, backend_url = select_llm_provider()
+    selected_quick_llm_provider, backend_url = select_llm_provider()
     
-    # Step 6: Thinking agents
+    # Step 6: Shallow thinking agent
     console.print(
         create_question_box(
-            "Step 6: Thinking Agents", "Select your thinking agents for analysis"
+            "Step 6: Shallow Thinker",
+            "Select your shallow thinking agent for analysis",
         )
     )
-    selected_shallow_thinker = select_shallow_thinking_agent(selected_llm_provider)
-    selected_deep_thinker = select_deep_thinking_agent(selected_llm_provider)
+    selected_shallow_thinker = select_shallow_thinking_agent(selected_quick_llm_provider)
 
-    # Step 7: Provider-specific thinking configuration
+    # Step 7: LLM provider (Deep thinker / Deep model)
+    console.print(
+        create_question_box(
+            "Step 7: LLM Provider (Deep Thinker)",
+            "Select which service the deep thinker should talk to",
+        )
+    )
+    selected_deep_llm_provider, deep_backend_url = select_llm_provider()
+
+    # Step 8: Deep thinking agent
+    console.print(
+        create_question_box(
+            "Step 8: Deep Thinker",
+            "Select your deep thinking agent for analysis",
+        )
+    )
+    selected_deep_thinker = select_deep_thinking_agent(selected_deep_llm_provider)
+
+    # Step 9: Provider-specific thinking configuration
     thinking_level = None
     reasoning_effort = None
 
-    provider_lower = selected_llm_provider.lower()
-    if provider_lower == "google":
+    quick_provider_lower = selected_quick_llm_provider.lower()
+    deep_provider_lower = selected_deep_llm_provider.lower()
+    if "google" in (quick_provider_lower, deep_provider_lower):
         console.print(
             create_question_box(
-                "Step 7: Thinking Mode",
+                "Step 9: Thinking Mode",
                 "Configure Gemini thinking mode"
             )
         )
         thinking_level = ask_gemini_thinking_config()
-    elif provider_lower == "openai":
+    if "openai" in (quick_provider_lower, deep_provider_lower):
         console.print(
             create_question_box(
-                "Step 7: Reasoning Effort",
+                "Step 9: Reasoning Effort",
                 "Configure OpenAI reasoning effort level"
             )
         )
         reasoning_effort = ask_openai_reasoning_effort()
 
-    # Step 8: Output language
+    # Step 10: Output language
     console.print(
         create_question_box(
-            "Step 8: Output Language",
+            "Step 10: Output Language",
             "Select the language for AI agent outputs and reports"
         )
     )
@@ -589,8 +609,15 @@ def get_user_selections():
         "analysis_date": analysis_date,
         "analysts": selected_analysts,
         "research_depth": selected_research_depth,
-        "llm_provider": selected_llm_provider.lower(),
+        # Providers can differ for deep/quick. Keep llm_provider for backward compatibility
+        # (used as default provider when deep/quick providers are not set).
+        "llm_provider": selected_quick_llm_provider.lower(),
+        "quick_llm_provider": selected_quick_llm_provider.lower(),
+        "deep_llm_provider": selected_deep_llm_provider.lower(),
+        # Keep backend_url for backward compatibility, but also record per-model base URLs
         "backend_url": backend_url,
+        "quick_backend_url": backend_url,
+        "deep_backend_url": deep_backend_url,
         "shallow_thinker": selected_shallow_thinker,
         "deep_thinker": selected_deep_thinker,
         "google_thinking_level": thinking_level,
@@ -918,6 +945,12 @@ def run_analysis():
     config["deep_think_llm"] = selections["deep_thinker"]
     config["backend_url"] = selections["backend_url"]
     config["llm_provider"] = selections["llm_provider"].lower()
+    # Allow deep/quick to use different providers
+    config["quick_llm_provider"] = selections.get("quick_llm_provider")
+    config["deep_llm_provider"] = selections.get("deep_llm_provider")
+    # Allow deep/quick to use different base URLs (OpenAI-compatible providers)
+    config["quick_backend_url"] = selections.get("quick_backend_url")
+    config["deep_backend_url"] = selections.get("deep_backend_url")
     # Provider-specific thinking configuration
     config["google_thinking_level"] = selections.get("google_thinking_level")
     config["openai_reasoning_effort"] = selections.get("openai_reasoning_effort")
@@ -959,7 +992,8 @@ def run_analysis():
             func(*args, **kwargs)
             timestamp, message_type, content = obj.messages[-1]
             content = content.replace("\n", " ")  # Replace newlines with spaces
-            with open(log_file, "a") as f:
+            # Windows 默认编码可能是 GBK，遇到特殊字符会写入失败；统一用 UTF-8
+            with open(log_file, "a", encoding="utf-8", errors="replace") as f:
                 f.write(f"{timestamp} [{message_type}] {content}\n")
         return wrapper
     
@@ -970,7 +1004,7 @@ def run_analysis():
             func(*args, **kwargs)
             timestamp, tool_name, args = obj.tool_calls[-1]
             args_str = ", ".join(f"{k}={v}" for k, v in args.items())
-            with open(log_file, "a") as f:
+            with open(log_file, "a", encoding="utf-8", errors="replace") as f:
                 f.write(f"{timestamp} [Tool Call] {tool_name}({args_str})\n")
         return wrapper
 
