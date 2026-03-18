@@ -154,6 +154,7 @@ def select_shallow_thinking_agent(provider) -> str:
         "openrouter": [
             ("NVIDIA Nemotron 3 Nano 30B (free)", "nvidia/nemotron-3-nano-30b-a3b:free"),
             ("Z.AI GLM 4.5 Air (free)", "z-ai/glm-4.5-air:free"),
+            ("NVIDIA Nemotron 3 Super 120B (free)", "nvidia/nemotron-3-super-120b-a12b:free"),
         ],
         "ollama": [
             ("Qwen3:latest (8B, local)", "qwen3:latest"),
@@ -222,6 +223,7 @@ def select_deep_thinking_agent(provider) -> str:
         "openrouter": [
             ("Z.AI GLM 4.5 Air (free)", "z-ai/glm-4.5-air:free"),
             ("NVIDIA Nemotron 3 Nano 30B (free)", "nvidia/nemotron-3-nano-30b-a3b:free"),
+            ("NVIDIA Nemotron 3 Super 120B (free)", "nvidia/nemotron-3-super-120b-a12b:free"),
         ],
         "ollama": [
             ("GLM-4.7-Flash:latest (30B, local)", "glm-4.7-flash:latest"),
